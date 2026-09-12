@@ -192,7 +192,7 @@ func ParseVDFSinglePass(text string) (map[string]any, error) {
 	if len(vdfs.KVBuffer) > 0 {
 		// fmt.Printf("%+v", vdfs.KVBuffer)
 		for _, el := range vdfs.KVBuffer {
-			root[el[0]] = el[1]
+			root[strings.ToLower(el[0])] = el[1]
 		}
 	}
 	// fmt.Printf("root ---------> %+v", root)
