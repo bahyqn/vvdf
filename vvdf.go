@@ -61,14 +61,14 @@ func (vdfs *VDFS) newSubMap(root map[string]any) {
 	if vdfs.ParentDept == -1 {
 		for _, el := range vdfs.KVBuffer {
 			// fmt.Println("-1 ", el)
-			tempMap[el[0]] = el[1]
+			tempMap[strings.ToLower(el[0])] = el[1]
 		}
 	}
 
 	if vdfs.ParentDept >= 0 {
 		for _, el := range vdfs.KVBuffer[vdfs.BraceStack[vdfs.ParentDept]:] {
 			// fmt.Println(el)
-			tempMap[el[0]] = el[1]
+			tempMap[strings.ToLower(el[0])] = el[1]
 		}
 
 		vdfs.KVBuffer = vdfs.KVBuffer[:vdfs.LastBraceKVIdx]
