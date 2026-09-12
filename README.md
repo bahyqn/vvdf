@@ -2,6 +2,9 @@
 
 `vvdf is a lightweight, zero-dependency Go library for parsing Valve Data Format (VDF / KeyValues) text into Go maps. It provides a robust, single-pass parser designed to handle complex nested structures, inline comments, and non-standard Valve configuration formats safely.
 
+> **Note on Test Coverage / Scope:**  
+> *This library is tailored for VPK metadata processing and has been tested specifically against internal VPK configuration files: `addoninfo.txt` and `mission/*.txt`.*
+
 Features
 - Single-Pass Parser: Memory-efficient stream parsing using a bottom-up assembly strategy.
 
