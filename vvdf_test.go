@@ -5,14 +5,73 @@ import (
 	"testing"
 )
 
-var testData = []string{
-		`"AddonInfo"
+var testData = []string{`"AddonInfo"
+{
+        "addonSteamAppID"                  "550"
+        "addonTitle"                       "The Curse of Lazar Castle"
+        "addonVersion"                     "1.0"
+        "addonTagline"                     "God help us all"
+        "addonAuthor"                      "Dereck"
+        "addonAuthorSteamID"               "Kvothe Venture"
+        "addonSteamGroupName"              "0"
+        "addonURL0"                        "http://steamcommunity.com/sharedfiles/filedetails/?id=503361241"
+
+        "addonContent_Campaign"            "1"
+        "addonContent_Survival"            "0"
+        "addonContent_Scavenge"            "0"
+        "addonContent_Versus"              "0"
+        "addonContent_Map"                 "0"
+
+        "addonContent_Survivor"            "0"
+        "addonContent_Skin"                "0"
+
+        "addonContent_BossInfected"        "0"
+        "addonContent_CommonInfected"      "0"
+        "addonContent_Music"               "0"
+        "addonContent_Sound"               "0"
+        "addonContent_Prop"                "0"
+        "addonContent_Prefab"              "0"
+        "addonContent_Spray"               "0"
+        "addonContent_Script"              "0"
+        "addonContent_BackgroundMovie"     "0"
+
+        "Content_Weapon"                   "0"
+        "Content_WeaponModel"              "0"
+
+        "addonDescription"                 "Only God can save us from this evil."
+        "addonDescription_DA"              "Overlevende skal undslippe et S-tog i denne korte tutorial eksempel kampagne. F� kildefiler og v�rkt�jer til at skabe dine egne kampagner ved at downloade Left 4 Dead 2 Authoring v�rkt�jer SDK, som er tilg�ngelig under 'Funktioner' fanen i Steam."
+        "addonDescription_NL"              "Overlevenden moet ontsnappen op een metro in deze korte handleiding voorbeeld campagne. Krijg bronbestanden en tools voor het maken van uw eigen campagnes door het downloaden van de Left 4 Dead 2 Authoring gereedschappen SDK, die beschikbaar is op het tabblad 'Extra' in Steam."
+        "addonDescription_FI"              "Survivors on pelastautua metro t�ss� lyhyess� harjoitusesimerkit kampanja. Hanki l�hdetiedostot ja ty�kalut luoda omia kampanjoita lataamalla Left 4 Dead 2 Authoring Tools SDK, joka on k�ytett�viss� Ty�kalut-v�lilehti Steam."
+        "addonDescription_FR"              "Les survivants doivent s'�chapper en m�tro dans cette carte du tutoriel. Obtenez les fichiers et les outils pour cr�er vos propres cartes en chargeant les outils de cr�ation SDK Left 4 Dead 2 qui sont disponibles sous l'onglet 'Outils' sur Steam."
+        "addonDescription_DE"              "Survivors muss auf einer U-Bahn in diesem kurzen Tutorial beispielsweise Kampagne entkommen. Holen Sie sich die Quelldateien und Werkzeuge f�r die Erstellung eigener Kampagnen, indem Sie die Left 4 Dead 2 Authoring Tools SDK, welches unter der Registerkarte 'Tools' in Steam."
+        "addonDescription_IT"              "I sopravvissuti devono sfuggire su un treno della metropolitana in questa breve campagna esempio tutorial. Ottenere file di origine e di strumenti per la creazione di campagne scaricando il Left 4 Dead 2 Authoring Tools SDK, che � disponibile sotto la scheda 'Strumenti' nel vapore."
+        "addonDescription_JA"              "?????????????????????????????????????????????????????[???]??????????????4???2??????????SDK?????????????????????????????????????????????????????"
+        "addonDescription_KO"              "?????? ?? ???? ?? ??? ????? ???????. ??? '??'?? ?? ??? ? ???? ??? 4 ?? 2 ?? ?? SDK? ?????? ??? ???? ????? ?? ??? ??? ??."
+        "addonDescription_NO"              "Overlevende m� r�mme p� et tog i denne korte oppl�ringen eksempel kampanjen. F� kildefilene og verkt�y for � lage dine egne kampanjer ved � laste ned Left 4 Dead 2 Authoring verkt�y SDK, som er tilgjengelig under 'Verkt�y'-fanen i Steam."
+        "addonDescription_PL"              "Ocaleni musza uciekac na pociag metra w tej kr�tkiej kampanii przyklad samouczka. Pobierz pliki zr�dlowe i narzedzia do tworzenia wlasnych kampanii pobierajac Left 4 Dead 2 Authoring narzedzi SDK, kt�ry jest dostepny w zakladce 'Narzedzia' w Steam."
+        "addonDescription_PT"              "Sobreviventes deve escapar em um trem do metr� nesta campanha exemplo curto tutorial. Obter arquivos de origem e ferramentas para criar suas pr�prias campanhas baixando o Left 4 Dead 2 Authoring ferramentas SDK, que est� dispon�vel na aba 'Ferramentas' no Steam."
+        "addonDescription_RU"              "???????? ?????? ?????? ?? ????? ?????, ??? ???? ???????? ???????? ?????? ?????. ???????? ???????? ????? ? ??????????? ??? ???????? ??????????? ????????, ???????? Left 4 Dead 2 Authoring ???????????? SDK, ??????? ???????? ?? ??????? '???????????' ? Steam."
+        "addonDescription_ZH"              "???????????????????????????????????4???2????SDK,?????�??�?????????????????"
+        "addonDescription_ES"              "Los sobrevivientes deben escapar en un tren subterr�neo en esta corta campa�a de ejemplo del tutorial. Obtenga los archivos de origen y las herramientas para crear sus propias campa�as por descargar el Left 4 Dead 2 Authoring herramientas SDK, que est� disponible en la pesta�a 'Herramientas' en Steam."
+        "addonDescription_SV"              "�verlevande m�ste fly p� ett tunnelbanet�g i denna korta handledning exempel kampanjen. F� k�llfiler och verktyg f�r att skapa dina egna kampanjer genom att ladda ner Left 4 Dead 2 Authoring Tools SDK, som �r tillg�nglig under 'Verktyg' fliken i Steam." missions:// Mission files describe the metadata needed by campaign-specific add-ons so they can be
+// integrated into Left4Dead. The data in this file is used by the game UI, matchmaking and server.
+// Although you may provide multiple Campaigns in one add-on by putting more than one .TXT file
+// in the missions folder, it's generally a good idea to stick to one per add-on.
+//
+// HOW TO DEBUG MISSION FILES:
+//      In the console set "developer 2"
+//      Then type "mission_reload"
+// This will make the game reload all the mission files and print out every chapter for every mode it
+// finds.  It's very useful to ensure that your mission file is being correctly read.
+
+`,
+	`"AddonInfo"
 {
      addonSteamAppID         "550"
-     addontitle              "Super Healing" 
+     addontitle              "Super Healing"
      addonversion            "2.0"
      addonauthor             "Andree Tran"
-     addonDescription        "Super Healing" 
+     addonDescription        "Super Healing"
 1
 }`,
 	`"AddonInfo"
@@ -382,12 +441,12 @@ addonContent_Skin 1 //0 if no new skin textures for existing models. 1 if multip
 func TestStringToMap(t *testing.T) {
 	for idx, el := range testData {
 		tmap, err := StringToMap(el)
+		fmt.Printf("%+v\n\n", tmap)
 
 		fmt.Println("---------------", idx, "----------")
 		if err != nil {
 			panic("went wrong")
 		}
 
-		fmt.Printf("%+v\n\n", tmap)
 	}
 }

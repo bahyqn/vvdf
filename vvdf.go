@@ -100,20 +100,47 @@ func (vdfs *VDFS) newMapKey(root map[string]any) {
 	}
 }
 
+// func StringToMap(text string) (map[string]any, error) {
+// 	if text == "" {
+// 		return map[string]any{}, nil
+// 	}
+
+// 	start := strings.Index(text, "{")
+// 	end := strings.LastIndex(text, "}")
+
+// 	fmt.Println(end)
+// 	if end == -1 {
+// 		// end = len(strings.TrimSpace(text[start:]))
+// 		end = len(text[start:])
+// 		fmt.Println(text[start])
+// 	}
+
+// 	// if start != -1 && end != -1 && start < end {
+// 	if start != -1 && end != -1 && start < end {
+// 		str := strings.TrimSpace(text[start : end+1])
+// 		return ParseVDFSinglePass(str)
+// 	}
+
+//		return map[string]any{}, fmt.Errorf("xxxxxxxxxx")
+//	}
 func StringToMap(text string) (map[string]any, error) {
 	if text == "" {
 		return map[string]any{}, nil
 	}
 
 	start := strings.Index(text, "{")
-	end := strings.LastIndex(text, "}")
-
-	if start != -1 && end != -1 && start < end {
-		str := strings.TrimSpace(text[start : end+1])
-		return ParseVDFSinglePass(str)
+	if start == -1 {
+		return map[string]any{}, fmt.Errorf("invalid VDF: missing '{'")
 	}
 
-	return map[string]any{}, fmt.Errorf("xxxxxxxxxx")
+	end := strings.LastIndex(text, "}")
+	if end == -1 || end < start {
+		end = len(text) - 1
+	}
+
+	str := strings.TrimSpace(text[start : end+1])
+
+	return ParseVDFSinglePass(str)
 }
 
 func ParseVDFSinglePass(text string) (map[string]any, error) {
@@ -159,6 +186,13 @@ func ParseVDFSinglePass(text string) (map[string]any, error) {
 				vdfs.KVBuffer = append(vdfs.KVBuffer, tokenSlice)
 				vdfs.LastBraceKVIdx += 1
 			}
+		}
+	}
+
+	if len(vdfs.KVBuffer) > 0 {
+		// fmt.Printf("%+v", vdfs.KVBuffer)
+		for _, el := range vdfs.KVBuffer {
+			root[el[0]] = el[1]
 		}
 	}
 	// fmt.Printf("root ---------> %+v", root)
