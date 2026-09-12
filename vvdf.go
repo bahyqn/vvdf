@@ -20,6 +20,8 @@ type VDFS struct {
 	ParentKeys []string
 	// ParentDepth tracks the active index pointer for ParentKeys (-1 for root)
 	ParentDept int
+	// void fake key
+	InnerKey string
 }
 
 func NewVDFS() *VDFS {
@@ -33,18 +35,27 @@ func NewVDFS() *VDFS {
 }
 
 func (vdfs *VDFS) newSubMap(root map[string]any) {
+	if vdfs.ParentDept >= 0 && vdfs.ParentKeys[vdfs.ParentDept] == vdfs.InnerKey {
+		vdfs.ParentDept += 1
+		vdfs.ParentKeys = append(vdfs.ParentKeys, vdfs.InnerKey)
+		vdfs.BraceStack = append(vdfs.BraceStack, vdfs.LastBraceKVIdx)
+	}
+
+	vdfs.InnerKey = ""
+
 	tempMap := root
 
 	if vdfs.ParentDept >= 0 {
-	}
-	for i := 0; i <= vdfs.ParentDept; i++ {
 
-		t, ok := tempMap[vdfs.ParentKeys[i]].(map[string]any)
+		for i := 0; i <= vdfs.ParentDept; i++ {
 
-		if !ok {
-			panic("newSubMap")
+			t, ok := tempMap[vdfs.ParentKeys[i]].(map[string]any)
+
+			if !ok {
+				panic("newSubMap")
+			}
+			tempMap = t
 		}
-		tempMap = t
 	}
 
 	if vdfs.ParentDept == -1 {
@@ -139,9 +150,11 @@ func ParseVDFSinglePass(text string) (map[string]any, error) {
 
 			switch len(tokenSlice) {
 			case 1:
-				vdfs.ParentDept += 1
-				vdfs.ParentKeys = append(vdfs.ParentKeys, tokenSlice[0])
-				vdfs.BraceStack = append(vdfs.BraceStack, vdfs.LastBraceKVIdx)
+				vdfs.InnerKey = tokenSlice[0]
+
+				// vdfs.ParentDept += 1
+				// vdfs.ParentKeys = append(vdfs.ParentKeys, tokenSlice[0])
+				// vdfs.BraceStack = append(vdfs.BraceStack, vdfs.LastBraceKVIdx)
 			case 2:
 				vdfs.KVBuffer = append(vdfs.KVBuffer, tokenSlice)
 				vdfs.LastBraceKVIdx += 1

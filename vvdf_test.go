@@ -6,6 +6,15 @@ import (
 )
 
 var testData = []string{
+		`"AddonInfo"
+{
+     addonSteamAppID         "550"
+     addontitle              "Super Healing" 
+     addonversion            "2.0"
+     addonauthor             "Andree Tran"
+     addonDescription        "Super Healing" 
+1
+}`,
 	`"AddonInfo"
 {
      addonSteamAppID 			550			// 550 is the app ID for Left 4 Dead 2
@@ -22,13 +31,13 @@ var testData = []string{
      addonURL0				"http://steamcommunity.com/sharedfiles/filedetails/?id=121086524"
 								// where people can download your VPK
 
-     addonDescription			"The city is burning. As ash falls, the survivors attempt to flee to a small military airfield on the other side of the river. It's a straight path down the main boulevard, but nothing is ever simple. Crashed cars, blazing fires, police barricades, and the city itself all stand in their way." 
+     addonDescription			"The city is burning. As ash falls, the survivors attempt to flee to a small military airfield on the other side of the river. It's a straight path down the main boulevard, but nothing is ever simple. Crashed cars, blazing fires, police barricades, and the city itself all stand in their way."
 
-     addonContent_Script		1			// Has Scripts 
-     addonContent_Music			0			// Has Custom Music 
-     addonContent_Sound			1			// Has Custom Sound 
-     addonContent_prop			1			// This Add-on provides new props, 
-     addonContent_Prefab		0			// Provides new prefabs 
+     addonContent_Script		1			// Has Scripts
+     addonContent_Music			0			// Has Custom Music
+     addonContent_Sound			1			// Has Custom Sound
+     addonContent_prop			1			// This Add-on provides new props,
+     addonContent_Prefab		0			// Provides new prefabs
      addonContent_BackgroundMovie	0			// Provides a replacement for the background movie.
      addonContent_Survivor 		0			// Provides a new survivor model. 0=false, 1=true, String in quotes if replaces specific single character, i.e. "Coach"
      								// eg addonContent_Survivor "rochelle" works fine, no number.
@@ -47,45 +56,45 @@ var testData = []string{
 	"Version"		"12"
 	"Author"		"The Rabbit"
 	"Website"		"http://steamcommunity.com/sharedfiles/filedetails/?id=121086524"
- 
+
 	"DisplayTitle"		"Urban Flight"
 	"Description"		"The city is burning. As ash falls, the survivors attempt to flee to a small military airfield on the other side of the river. It's a straight path down the main boulevard, but nothing is ever simple. Crashed cars, blazing fires, police barricades, and the city itself all stand in their way."
 	"Image"			"maps/uf0_poster"
 	"OuttroImage"		"vgui/OutroTitle_UrbanFlight"
- 
+
 	"x360ctx"		"5"
- 
+
 	"no_wpn_restore"	"1"		// on player wipe, don't keep any weapons
 	"meleeweapons"		"machete;fireaxe;frying_pan;cricket_bat;baseball_bat;knife;crowbar;golfclub;electric_guitar;katana;tonfa"
- 
+
 	// Loading poster data
 	"poster"
 	{
 		"posterImage"		        "LoadingScreen_UrbanFlight"
 		"posterImage_widescreen"	"LoadingScreen_UrbanFlight_widescreen"
- 
+
 		"fullscreen"			"1"
- 
+
 		"posterTitle"			"Urban Flight"
 		"posterTitle_y"			"320"
- 
+
 		"posterTagline"			"No plane, no gain"
 		"posterTagline_y"		"380"
- 
+
 		"l4d2_names"			"1"
- 
+
 		"mechanic_player_name_x"	"9999"
 		"mechanic_player_name_y"	"9999"
- 
-		"coach_player_name_x"		"9999"		
-		"coach_player_name_y"		"9999"	
- 
-		"producer_player_name_x"	"9999"	
-		"producer_player_name_y"	"9999"	
- 
+
+		"coach_player_name_x"		"9999"
+		"coach_player_name_y"		"9999"
+
+		"producer_player_name_x"	"9999"
+		"producer_player_name_y"	"9999"
+
 		"gambler_player_name_x"		"9999"
 		"gambler_player_name_y"		"9999"
- 
+
 		"character_order"		"mechanic;coach;producer;gambler"
 	}
 
@@ -111,7 +120,7 @@ var testData = []string{
 				"DisplayName" "3: Harbor"
 				"Image" "maps/uf3_harbor"
 			}
-			"4"		
+			"4"
 			{
 				"Map" "uf4_airfield"
 				"DisplayName" "4: Airfield"
@@ -156,7 +165,7 @@ var testData = []string{
 				"Image" "maps/uf4_airfield"
 				"VersusCompletionScore"	"800"
 			}
-		}	
+		}
 		"survival"
 		{
 			"1"
@@ -171,7 +180,7 @@ var testData = []string{
 				"DisplayName" "Airfield"
 				"Image" "maps/uf4_hanger"
 			}
-		}	
+		}
 		"scavenge"
 		{
 			"1"
@@ -180,7 +189,7 @@ var testData = []string{
 				"DisplayName" "Airfield"
 				"Image" "maps/uf4_backarea"
 			}
-		}	
+		}
 	}
 }`,
 	`"AddonInfo"
@@ -205,11 +214,10 @@ addonContent_BossInfected 1
 
 addonContent_Skin 1 //0 if no new skin textures for existing models. 1 if multiple skin pack. String in quotes if specific single skin
 
- 
 }`,
 	`missions:// Mission files describe the metadata needed by campaign-specific add-ons so they can be
 // integrated into Left4Dead. The data in this file is used by the game UI, matchmaking and server.
-// Although you may provide multiple Campaigns in one add-on by putting more than one .TXT file 
+// Although you may provide multiple Campaigns in one add-on by putting more than one .TXT file
 // in the missions folder, it's generally a good idea to stick to one per add-on.
 //
 // HOW TO DEBUG MISSION FILES:
@@ -225,7 +233,7 @@ addonContent_Skin 1 //0 if no new skin textures for existing models. 1 if multip
 	// be something unique.  One suggestion to is use your initials and a short
 	// abbreviated name for your campaign. Avoid spaces and special characters.
 	// Do not change the name when you create a revision, as the matchmaking
-        // system will consider it a different campaign. Instead, use "Version" and 
+        // system will consider it a different campaign. Instead, use "Version" and
         // "DisplayTitle" below to indicate revisions.
 	"Name"		"warcelona"
 
@@ -246,7 +254,7 @@ addonContent_Skin 1 //0 if no new skin textures for existing models. 1 if multip
 	// description, a link to download it, and installation instructions.
 	"Website"	"http://www.warcelonacampaign.com/"
 
-	// This name is used when referring to the campaign in the UI. 
+	// This name is used when referring to the campaign in the UI.
 	"DisplayTitle"	"Warcelona"
 	"Description"  	"Kill zombies in the streets of Barcelona. Football fans? Certainly. Beating zombies to death with a ham leg? That too. Spanish fiesta? Of course. Bulls? No doubt."
 
@@ -254,8 +262,6 @@ addonContent_Skin 1 //0 if no new skin textures for existing models. 1 if multip
         // Note: This item needs to have "vgui\" at the front. It is assumed
 	// for the poster and the map thumbnails.
  	"OuttroImage"	"vgui\bdd_thumb_end"
-
-
 
 	// Loading poster data
 	//
@@ -266,7 +272,7 @@ addonContent_Skin 1 //0 if no new skin textures for existing models. 1 if multip
 	{
 		"posterImage"		"cartel"
 		"posterImage_widescreen"	"cartel"
-		
+
 		"fullscreen"		"1"
 
                 //Note L4D2 does not position player names over the poster.
@@ -275,7 +281,7 @@ addonContent_Skin 1 //0 if no new skin textures for existing models. 1 if multip
 
 	// The modes section lists each of your campaign maps and each mode
 	// they support.  Depending on how you set up your campaign maps,
-	// you can reuse the same bsp for different modes as is the case with 
+	// you can reuse the same bsp for different modes as is the case with
         // coop and versus in this example. This requires setting up entities
         // that show up or operate differently for different modes.
         //
@@ -291,8 +297,7 @@ addonContent_Skin 1 //0 if no new skin textures for existing models. 1 if multip
 
 	"modes"
 	{
-		
-		
+
 		"coop"
 		{
 			"1"
@@ -324,9 +329,8 @@ addonContent_Skin 1 //0 if no new skin textures for existing models. 1 if multip
 				{
 					"spawn_witches"					"0"
 					"spawn_tanks"					"1"
-				}	
+				}
 			}
-		
 
 		}
 
@@ -364,14 +368,11 @@ addonContent_Skin 1 //0 if no new skin textures for existing models. 1 if multip
 					"tank_chance"		"1"
 					"witch_chance"		"0"
 					"witch_and_tank"		"0"
-				}	
+				}
 			}
-	
 
 		}
 
-		
-		
 	}
 
 }
