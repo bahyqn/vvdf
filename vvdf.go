@@ -10,119 +10,84 @@ import (
 var tokenRegexp = regexp.MustCompile(`"([^"]*)"|(\{|\}|\S+)`)
 
 type VDFS struct {
-	// KVBuffer stores temporary [key, value] pairs
-	KVBuffer [][]string
-	// LastBraceKVIdx stores the KVBuffer index where the last '{' occurred
-	LastBraceKVIdx int
-	// BraceStack records historical KVBuffer indices for each '{' scope level
+	KVBuffer   [][]string
 	BraceStack []int
-	// ParentKeys stores the chain of block keys waiting to be mapped
 	ParentKeys []string
-	// ParentDepth tracks the active index pointer for ParentKeys (-1 for root)
 	ParentDept int
-	// void fake key
-	InnerKey string
+	InnerKey   string
 }
 
 func NewVDFS() *VDFS {
 	return &VDFS{
-		KVBuffer:       [][]string{},
-		LastBraceKVIdx: -1,
-		BraceStack:     []int{},
-		ParentKeys:     []string{},
-		ParentDept:     -1,
+		KVBuffer:   [][]string{},
+		BraceStack: []int{},
+		ParentKeys: []string{},
+		ParentDept: -1,
 	}
 }
 
-func (vdfs *VDFS) newSubMap(root map[string]any) {
-	if vdfs.ParentDept >= 0 && vdfs.ParentKeys[vdfs.ParentDept] == vdfs.InnerKey {
-		vdfs.ParentDept += 1
-		vdfs.ParentKeys = append(vdfs.ParentKeys, vdfs.InnerKey)
-		vdfs.BraceStack = append(vdfs.BraceStack, vdfs.LastBraceKVIdx)
+// 沿 ParentKeys 链路找到当前层级的 target map
+func (vdfs *VDFS) getMapAtDept(root map[string]any, dept int) map[string]any {
+	tempMap := root
+	for i := 0; i <= dept; i++ {
+		pk := vdfs.ParentKeys[i]
+		if pk == "" {
+			continue
+		}
+		t, ok := tempMap[pk].(map[string]any)
+		if !ok {
+			t = make(map[string]any)
+			tempMap[pk] = t
+		}
+		tempMap = t
 	}
+	return tempMap
+}
 
+func (vdfs *VDFS) enterBlock(root map[string]any) {
+	key := strings.ToLower(vdfs.InnerKey)
 	vdfs.InnerKey = ""
 
-	tempMap := root
-
-	if vdfs.ParentDept >= 0 {
-
-		for i := 0; i <= vdfs.ParentDept; i++ {
-
-			t, ok := tempMap[vdfs.ParentKeys[i]].(map[string]any)
-
-			if !ok {
-				panic("newSubMap")
-			}
-			tempMap = t
-		}
-	}
-
 	if vdfs.ParentDept == -1 {
-		for _, el := range vdfs.KVBuffer {
-			// fmt.Println("-1 ", el)
-			tempMap[strings.ToLower(el[0])] = el[1]
+		if key == "" {
+			vdfs.ParentKeys = append(vdfs.ParentKeys, "")
+		} else {
+			root[key] = make(map[string]any)
+			vdfs.ParentKeys = append(vdfs.ParentKeys, key)
 		}
+	} else {
+		if key == "" {
+			key = "unnamed"
+		}
+
+		parentMap := vdfs.getMapAtDept(root, vdfs.ParentDept)
+		newMap := make(map[string]any)
+		parentMap[key] = newMap
+		vdfs.ParentKeys = append(vdfs.ParentKeys, key)
 	}
 
-	if vdfs.ParentDept >= 0 {
-		for _, el := range vdfs.KVBuffer[vdfs.BraceStack[vdfs.ParentDept]:] {
-			// fmt.Println(el)
-			tempMap[strings.ToLower(el[0])] = el[1]
-		}
-
-		vdfs.KVBuffer = vdfs.KVBuffer[:vdfs.LastBraceKVIdx]
-
-		vdfs.ParentKeys = vdfs.ParentKeys[:vdfs.ParentDept]
-		vdfs.ParentDept -= 1
-	}
+	vdfs.ParentDept++
+	vdfs.BraceStack = append(vdfs.BraceStack, len(vdfs.KVBuffer))
 }
 
-func (vdfs *VDFS) newMapKey(root map[string]any) {
-	if vdfs.ParentDept == 0 && vdfs.LastBraceKVIdx >= 0 {
-		root[vdfs.ParentKeys[0]] = make(map[string]any)
+func (vdfs *VDFS) leaveBlock(root map[string]any) {
+	if vdfs.ParentDept < 0 {
 		return
 	}
 
-	tempMap := root
+	targetMap := vdfs.getMapAtDept(root, vdfs.ParentDept)
+	startIdx := vdfs.BraceStack[vdfs.ParentDept]
 
-	if vdfs.ParentDept > 0 {
-		for i := 0; i < vdfs.ParentDept; i++ {
-
-			t, ok := tempMap[vdfs.ParentKeys[i]].(map[string]any)
-			if !ok {
-				panic("newMapKey ")
-			}
-			tempMap = t
-		}
-		tempMap[vdfs.ParentKeys[vdfs.ParentDept]] = make(map[string]any)
-		vdfs.BraceStack = append(vdfs.BraceStack, vdfs.LastBraceKVIdx)
+	for _, el := range vdfs.KVBuffer[startIdx:] {
+		targetMap[strings.ToLower(el[0])] = el[1]
 	}
+
+	vdfs.KVBuffer = vdfs.KVBuffer[:startIdx]
+	vdfs.ParentKeys = vdfs.ParentKeys[:vdfs.ParentDept]
+	vdfs.BraceStack = vdfs.BraceStack[:vdfs.ParentDept]
+	vdfs.ParentDept--
 }
 
-// func StringToMap(text string) (map[string]any, error) {
-// 	if text == "" {
-// 		return map[string]any{}, nil
-// 	}
-
-// 	start := strings.Index(text, "{")
-// 	end := strings.LastIndex(text, "}")
-
-// 	fmt.Println(end)
-// 	if end == -1 {
-// 		// end = len(strings.TrimSpace(text[start:]))
-// 		end = len(text[start:])
-// 		fmt.Println(text[start])
-// 	}
-
-// 	// if start != -1 && end != -1 && start < end {
-// 	if start != -1 && end != -1 && start < end {
-// 		str := strings.TrimSpace(text[start : end+1])
-// 		return ParseVDFSinglePass(str)
-// 	}
-
-//		return map[string]any{}, fmt.Errorf("xxxxxxxxxx")
-//	}
 func StringToMap(text string) (map[string]any, error) {
 	if text == "" {
 		return map[string]any{}, nil
@@ -139,12 +104,10 @@ func StringToMap(text string) (map[string]any, error) {
 	}
 
 	str := strings.TrimSpace(text[start : end+1])
-
 	return ParseVDFSinglePass(str)
 }
 
 func ParseVDFSinglePass(text string) (map[string]any, error) {
-	// vdfs := VDFS{}
 	vdfs := NewVDFS()
 	root := make(map[string]any)
 	scanner := bufio.NewScanner(strings.NewReader(text))
@@ -162,40 +125,34 @@ func ParseVDFSinglePass(text string) (map[string]any, error) {
 			}
 		}
 
-		switch strings.TrimSpace(line) {
+		trimmed := strings.TrimSpace(line)
+		if trimmed == "" {
+			continue
+		}
+
+		switch trimmed {
 		case "{":
-			if vdfs.ParentDept >= 0 {
-				vdfs.newMapKey(root)
-			}
+			vdfs.enterBlock(root)
 		case "}":
-			// vdfs.ParentKeys = vdfs.ParentKeys[:vdfs.ParentDept-1]
-			vdfs.newSubMap(root)
+			vdfs.leaveBlock(root)
 		default:
-			// fmt.Println(line)
-			st := strings.TrimSpace(line)
-			tokenSlice := extractTokensWithRegexp(st)
+			tokenSlice := extractTokensWithRegexp(trimmed)
 
 			switch len(tokenSlice) {
 			case 1:
 				vdfs.InnerKey = tokenSlice[0]
-
-				// vdfs.ParentDept += 1
-				// vdfs.ParentKeys = append(vdfs.ParentKeys, tokenSlice[0])
-				// vdfs.BraceStack = append(vdfs.BraceStack, vdfs.LastBraceKVIdx)
 			case 2:
 				vdfs.KVBuffer = append(vdfs.KVBuffer, tokenSlice)
-				vdfs.LastBraceKVIdx += 1
 			}
 		}
 	}
 
 	if len(vdfs.KVBuffer) > 0 {
-		// fmt.Printf("%+v", vdfs.KVBuffer)
 		for _, el := range vdfs.KVBuffer {
 			root[strings.ToLower(el[0])] = el[1]
 		}
 	}
-	// fmt.Printf("root ---------> %+v", root)
+
 	return root, nil
 }
 
@@ -205,7 +162,6 @@ func extractTokensWithRegexp(line string) []string {
 
 	for _, m := range matches {
 		var tok string
-
 		if strings.HasPrefix(m[0], `"`) {
 			tok = m[1]
 		} else {
@@ -213,7 +169,6 @@ func extractTokensWithRegexp(line string) []string {
 		}
 
 		tok = strings.TrimSpace(tok)
-
 		if tok != "" || strings.HasPrefix(m[0], `"`) {
 			tokens = append(tokens, tok)
 		}

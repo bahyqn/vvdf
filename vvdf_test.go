@@ -1,6 +1,7 @@
 package vvdf
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 )
@@ -440,13 +441,26 @@ addonContent_Skin 1 //0 if no new skin textures for existing models. 1 if multip
 
 func TestStringToMap(t *testing.T) {
 	for idx, el := range testData {
+		// if idx == 3 {}
 		tmap, err := StringToMap(el)
-		fmt.Printf("%+v\n\n", tmap)
-
 		fmt.Println("---------------", idx, "----------")
+		fmt.Printf("%+v\n", tmap)
+		fmt.Println(mapToJson(tmap))
+		fmt.Println()
+
 		if err != nil {
 			panic("went wrong")
 		}
-
 	}
+}
+
+func mapToJson(data map[string]any) string {
+	jsonBytes, err := json.MarshalIndent(data, "", "    ")
+
+	if err != nil {
+		fmt.Println("json.MarshalIndent failed:", err)
+		jsonBytes = []byte("{}")
+	}
+
+	return fmt.Sprintf("%s\n", string(jsonBytes))
 }
